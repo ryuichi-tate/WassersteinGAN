@@ -1,32 +1,32 @@
 Wasserstein GAN
 ===============
 
-Code accompanying the paper ["Wasserstein GAN"](https://arxiv.org/abs/1701.07875)
+論文 ["Wasserstein GAN"](https://arxiv.org/abs/1701.07875)に付随するコード
 
-## A few notes
+## いくつかの注意事項
 
-- The first time running on the LSUN dataset it can take a long time (up to an hour) to create the dataloader. After the first run a small cache file will be created and the process should take a matter of seconds. The cache is a list of indices in the lmdb database (of LSUN)
-- The only addition to the code (that we forgot, and will add, on the paper) are the [lines 163-166 of main.py](https://github.com/martinarjovsky/WassersteinGAN/blob/master/main.py#L163-L166). These lines act only on the first 25 generator iterations or very sporadically (once every 500 generator iterations). In such a case, they set the number of iterations on the critic to 100 instead of the default 5. This helps to start with the critic at optimum even in the first iterations. There shouldn't be a major difference in performance, but it can help, especially when visualizing learning curves (since otherwise you'd see the loss going up until the critic is properly trained). This is also why the first 25 iterations take significantly longer than the rest of the training as well.
-- If your learning curve suddenly takes a big drop take a look at [this](https://github.com/martinarjovsky/WassersteinGAN/issues/2). It's a problem when the critic fails to be close to optimum, and hence its error stops being a good Wasserstein estimate. Known causes are high learning rates and momentum, and anything that helps the critic get back on track is likely to help with the issue.
+- LSUNデータセットの初回実行時には、データローダの作成に長い時間（最大1時間）がかかることがあります。最初に実行した後は小さなキャッシュファイルが作成され、数秒で処理が完了します。キャッシュはlmdbデータベース（LSUN）のインデックスのリストです。
+- コードへの唯一の追加は（忘れていましたが、論文へは後で追加します）[main.pyの163-166行目](https://github.com/martinarjovsky/WassersteinGAN/blob/master/main.py#L163-L166)です。これらの行は、ジェネレータの学習の最初のイテレーションの25回目か、もしくはとても散発的に(500回のジェネレータのイテレーションにつき1回)動作します。このような場合、criticの反復回数をデフォルトの5回ではなく100回に設定しています。これは、最初の反復でもcriticを最適な状態で開始するのに役立ちます。パフォーマンスに大きな違いはないはずですが、特に学習曲線を視覚化するときに役立ちます（そうしないと、criticが適切に訓練されるまで損失が大きくなるのがわかるからです）。これが、最初の25回のイテレーションが残りの訓練よりもかなり長い時間を要する理由でもあります。
+- もしあなたの学習曲線が突然大きく落ちた場合は、[これ](https://github.com/martinarjovsky/WassersteinGAN/issues/2)を見てみてください。これは、criticが最適に近づくことができず、つまりcriticの学習がうまくいかずWasserstein距離の推定が上手くできなくなってしまったと考えられます。既知の原因は、高い学習率と大きなmomentum(慣性)であり、ceiticを軌道に戻すのを助けるものは何でも、この問題を解決する可能性があります。
 
-## Prerequisites
+## 前提条件
 
-- Computer with Linux or OSX
+- Linux もしくは OSXのコンピュータであること
 - [PyTorch](http://pytorch.org)
-- For training, an NVIDIA GPU is strongly recommended for speed. CPU is supported but training is very slow.
+- 学習には、速度の面からNVIDIA GPUの使用を強く推奨します。CPUでもサポートされていますが、学習は非常に遅くなります。
 
-Two main empirical claims:
+二つの主な経験談:
 
-### Generator sample quality correlates with discriminator loss
+### ジェネレータのサンプル品質(c.f.生成画像の質)はDiscriminatorの損失と相関します。
 
 ![gensample](imgs/w_combined.png "sample quality correlates with discriminator loss")
 
-### Improved model stability
+### モデルの安定性の向上
 
 ![stability](imgs/compare_dcgan.png "stability")
 
 
-## Reproducing LSUN experiments
+## LSUN実験の再現
 
 **With DCGAN:**
 
@@ -40,12 +40,12 @@ python main.py --dataset lsun --dataroot [lsun-train-folder] --cuda
 python main.py --mlp_G --ngf 512
 ```
 
-Generated samples will be in the `samples` folder.
+生成されたサンプルは `samples` フォルダにあります。
 
-If you plot the value `-Loss_D`, then you can reproduce the curves from the paper. The curves from the paper (as mentioned in the paper) have a median filter applied to them:
+Loss_D` の値をプロットすると、論文の曲線を再現することができる。論文の曲線には(論文で述べられているように)中央値フィルターが適用されています。
 
 ```python
 med_filtered_loss = scipy.signal.medfilt(-Loss_D, dtype='float64'), 101)
 ```
 
-More improved README in the works.
+より改良されたREADMEを公開しました。
