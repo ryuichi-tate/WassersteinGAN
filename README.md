@@ -31,7 +31,7 @@ Wasserstein GAN
 **With DCGAN:**
 
 ```bash
-python main.py --dataset lsun --dataroot [lsun-train-folder] --cuda
+python main.py --dataset cifar10 --dataroot /home/data/Tate/ --cuda
 ```
 
 **With MLP:**
